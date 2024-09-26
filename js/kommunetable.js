@@ -72,9 +72,24 @@ async function deleteKommune(kommune) {
     }
 }
 
+function sortKommuner(kommuner) {
+    //sortere efter først region kode, indenfor hver region efter navn
+    return kommuner.sort((kom1, kom2) => {
+        if (kom1.region.kode > kom2.region.kode) {
+            return 1
+        } else if (kom2.region.kode > kom1.region.kode) {
+            return -1
+        } else if (kom1.navn>kom2.navn) {
+            return 1
+        } else { return -1 }
+    })
+}
+
+
 let kommuner = []
 async function fetchKommuner() {
     kommuner = await fetchAnyUrl(urlKommune);
+    kommuner = sortKommuner(kommuner)
     kommuner.forEach(createTable);
 }
 
