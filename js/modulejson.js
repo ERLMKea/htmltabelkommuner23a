@@ -16,6 +16,16 @@ async function restDelete(url) {
     return response
 }
 
+const urlRegioner = "http://localhost:8080/regioner"
 
-export { fetchAnyUrl, restDelete}
+let regionMap = new Map()
+
+async function fetchRegioner() {
+    const regioner = await fetchAnyUrl(urlRegioner)
+    regioner.forEach(region => regionMap.set(region.navn, region))
+    return regionMap
+}
+
+
+export { fetchAnyUrl, restDelete, fetchRegioner}
 

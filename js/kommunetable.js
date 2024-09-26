@@ -1,4 +1,4 @@
-import {fetchAnyUrl, restDelete} from "./modulejson.js";
+import {fetchAnyUrl, restDelete, fetchRegioner} from "./modulejson.js";
 console.log("er i kommunetable")
 
 const urlKommune = "http://localhost:8080/kommuner"
@@ -25,6 +25,7 @@ function createTable(kommune) {
     cell.innerHTML = kommune.href
     cell.style.width = "15%"
 
+    //Add image
     if ((kommune.hrefPhoto.length) < 2) {
         cell = row.insertCell(cellCount++)
         cell.innerHTML = kommune.hrefPhoto
@@ -39,13 +40,26 @@ function createTable(kommune) {
         cell.appendChild(img)
     }
 
+    //Add region dropdown
     cell = row.insertCell(cellCount++)
-    cell.innerHTML = kommune.region.kode
-    cell.style.width = "15%"
+    const dropdown = document.createElement('select');
+    regmap.forEach(reg => {
+        const element = document.createElement('option');
+        element.textContent = reg.navn
+        element.value = reg.kode
+        element.region = reg
+        dropdown.append(element);
+    })
+    cell.appendChild(dropdown)
 
-    cell = row.insertCell(cellCount++)
-    cell.innerHTML = kommune.region.navn
-    cell.style.width = "20%"
+
+    //cell = row.insertCell(cellCount++)
+    //cell.innerHTML = kommune.region.kode
+    //cell.style.width = "15%"
+
+    //cell = row.insertCell(cellCount++)
+    //cell.innerHTML = kommune.region.navn
+    //cell.style.width = "20%"
 
     cell = row.insertCell(cellCount++)
     const pbDelete = document.createElement("input");
@@ -87,7 +101,10 @@ function sortKommuner(kommuner) {
 
 
 let kommuner = []
+let regmap = new Map()
+
 async function fetchKommuner() {
+    regmap = await fetchRegioner()
     kommuner = await fetchAnyUrl(urlKommune);
     kommuner = sortKommuner(kommuner)
     kommuner.forEach(createTable);
